@@ -9,7 +9,7 @@ import Openingscreen from './Openingscreen';
 const Snakebox = ({gameStarted, setGameStarted}) => {
 	return (
 		<>
-			<div className = ' p-5 h-[480px] w-[800px] border border-solid border-black border-2'>
+			<div className = ' p-5 h-[480px] w-[800px] border border-solid border-black border-2 relative'>
 				{gameStarted? <Snakescreen/> : <Openingscreen/>}
 			</div>
 		</>
