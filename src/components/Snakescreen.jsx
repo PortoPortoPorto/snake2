@@ -8,21 +8,21 @@ const Snakescreen = () => {
 	const [thirdPosition, setThirdPosition] = useState({ left: 32, top: 16});
 	const [fourthPosition, setFourthPosition] = useState({ left: 16, top: 16});
 	const [direction, setDirection] = useState(''); 
+	const [collision, setCollison] = useState(false); 
 
 	const handleArrowKey = (event) => {
- 		if(event.key === 'ArrowRight' && direction !== 'left') {
- 			console.log('right'); 
- 			setDirection('right');
- 		} else if(event.key === 'ArrowLeft' && direction !== 'right') {
- 			console.log('left'); 
- 			setDirection('left');
- 		} else if(event.key === 'ArrowUp' && direction !== 'down') {
- 			console.log('up'); 
- 			setDirection('up');
- 		} else if(event.key === 'ArrowDown' && direction !== 'up') {
- 			console.log('down'); 
- 			setDirection('down');
- 		}
+	 	setDirection(prevDirection => {
+	 		if(event.key === 'ArrowRight' && prevDirection !== 'left') {
+	 			return 'right';
+	 		} else if(event.key === 'ArrowLeft' && prevDirection !== 'right') {
+	 			return 'left'; 
+	 		} else if(event.key === 'ArrowUp' && prevDirection !== 'down') {
+	 			return 'up';
+	 		} else if(event.key === 'ArrowDown' && prevDirection !== 'up') {
+	 			return 'down'; 
+	 		} 
+	 		return prevDirection; 
+	 	});
 	}
 
 	useEffect(() => {
@@ -33,13 +33,11 @@ const Snakescreen = () => {
 	}, []); 
 
 	useEffect(() => {
-		setDirection(direction); 
+		console.log(direction); 
 		moveHead(); 
 	}, [direction]); 
 
 	useEffect(() => {
-		console.log(headPosition);
-		console.log(direction); 
 	}, [headPosition]); 
 
 
@@ -49,18 +47,31 @@ const Snakescreen = () => {
 		
 		if(direction === 'up') {
 			const newTopPosition = previousTopPosition - 16;
-			setHeadPosition({left : previousLeftPosition, top : newTopPosition}); 
+			setHeadPosition({left : previousLeftPosition, top : newTopPosition});
+			setSecondPosition({left: previousLeftPosition, top: previousTopPosition}); 
+			setThirdPosition(secondPosition);
+			setFourthPosition(thirdPosition);
 		} else if (direction === 'down') {
 			const newTopPosition = previousTopPosition + 16;
-			setHeadPosition({left : previousLeftPosition, top : newTopPosition}); 
+			setHeadPosition({left : previousLeftPosition, top : newTopPosition});
+			setSecondPosition({left: previousLeftPosition, top: previousTopPosition});  
+			setThirdPosition(secondPosition);
+			setFourthPosition(thirdPosition);
 		} else if (direction === 'right') {
 			const newLeftPosition = previousLeftPosition + 16;
-			setHeadPosition({left : newLeftPosition, top : previousTopPosition}); 
+			setHeadPosition({left : newLeftPosition, top : previousTopPosition});
+			setSecondPosition({left: previousLeftPosition, top: previousTopPosition}); 
+			setThirdPosition(secondPosition);
+			setFourthPosition(thirdPosition); 
 		} else if (direction === 'left') {
 			const newLeftPosition = previousLeftPosition - 16;
-			setHeadPosition({left : newLeftPosition, top : previousTopPosition}); 
-		}
+			setHeadPosition({left : newLeftPosition, top : previousTopPosition});
+			setSecondPosition({left: previousLeftPosition, top: previousTopPosition});
+			setThirdPosition(secondPosition); 
+			setFourthPosition(thirdPosition); 
+		} 
 	}; 
+
 
 	return (
 		<>
