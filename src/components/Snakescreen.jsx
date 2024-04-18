@@ -1,16 +1,22 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import Snakebody from './Snakebody'; 
 
-const Snakescreen = () => {
-	
+const Snakescreen = ({gameStarted}) => {
 	const [headPosition, setHeadPosition] = useState({ left: 64, top:16 }); 
 	const [secondPosition, setSecondPosition] = useState({ left: 48, top: 16});
 	const [thirdPosition, setThirdPosition] = useState({ left: 32, top: 16});
 	const [fourthPosition, setFourthPosition] = useState({ left: 16, top: 16});
-	const [direction, setDirection] = useState(''); 
+	const [direction, setDirection] = useState('right'); 
 	const [wallCollision, setWallCollision] = useState(false); 
+	const [count, setCount] = useState(0);
+	const snakeHasStarted = useRef(false); 
+	const wallInitialised = useRef(false); 
+
 
 	const handleArrowKey = (event) => {
+	 	console.log(event.key); 
+	 	console.log(direction); 
 	 	setDirection(prevDirection => {
 	 		if(event.key === 'ArrowRight' && prevDirection !== 'left') {
 	 			return 'right';
@@ -21,13 +27,13 @@ const Snakescreen = () => {
 	 		} else if(event.key === 'ArrowDown' && prevDirection !== 'up') {
 	 			return 'down'; 
 	 		} 
-	 		return prevDirection; 
+
+	 		return direction; 
 	 	});
 	}
 
 	const checkForWallCollision = (newHeadPosition) => {
 		setWallCollision(prevWallCollision => {
-			console.log(newHeadPosition.top);
 			if (newHeadPosition.top < 0 || newHeadPosition.top > 464) {
 				return true; 
 			} else if (newHeadPosition.left < 0 || newHeadPosition.left > 784) {
@@ -35,35 +41,54 @@ const Snakescreen = () => {
 			}
 			return prevWallCollision; 	
 		}); 
-		console.log('wall collision:', wallCollision);
 	}
 
 
 	useEffect(() => {
+	//add event listeners and set up state
+		window.addEventListener('keydown', handleArrowKey); 
+		if(snakeHasStarted.current === true)return; 
+		snakeHasStarted.current = true; 
+		console.log('LOADED'); 
 		window.addEventListener('keydown', handleArrowKey); 
 		return () => {
-			window.removeEventListener('keydown', handleArrowKey); 
+		//clean up event listeners, direction etc	
+			window.removeEventListener('keydown', handleArrowKey);
+			setDirection(''); 
 		}; 
 	}, []); 
 
 	useEffect(() => {
-		moveHead();
-		console.log(headPosition); 
-	}, [direction]); 
+	//set up autoMove interval
+		const autoMoveInterval = setInterval(() => {
+			setDirection((d) => direction);
+			setHeadPosition((p) => headPosition);  
+			moveHead(direction, headPosition); 
+		}, 200);
+		return () => {
+			clearInterval(autoMoveInterval);
+		}
+	}, [headPosition, direction]);
 
 	useEffect(() => {
+		if(!wallInitialised.current){
+			wallInitialised.current = true;
+			return;
+		}
 		console.log('wall collision:', wallCollision);
-		console.log('game over'); 
+		wallCollision === true ? console.log('game over') : console.log('no collision');   
 	}, [wallCollision]); 
 
 
-	const moveHead = () => {
+	const moveHead = (direction, headPosition) => {
+		console.log('head position:', headPosition); 
 		const previousLeftPosition = headPosition.left;
 		const previousTopPosition = headPosition.top;
 		let newHeadPosition; 
 		
 		if(direction === 'up') {
 			const newTopPosition = previousTopPosition - 16;
+			console.log('previous position:', previousTopPosition, 'new position:', newTopPosition); 
 			newHeadPosition = {left: previousLeftPosition, top: newTopPosition};
 			setSecondPosition({left: previousLeftPosition, top: previousTopPosition}); 
 			setThirdPosition(secondPosition);
@@ -89,7 +114,8 @@ const Snakescreen = () => {
 		} else {
 			return;
 		}
-		setHeadPosition(newHeadPosition); 
+		console.log('new head position', newHeadPosition);
+		setHeadPosition((prevHeadPosition) => newHeadPosition); 
 		checkForWallCollision(newHeadPosition);
 	}; 
 
@@ -97,23 +123,14 @@ const Snakescreen = () => {
 	return (
 		<>
 		<div className='h-full w-full p-5  justify-center items-center'>
-				<div name='snakeComponent'
-					 className= {`h-[14px] w-[14px] ${wallCollision ? 'bg-[#647564]' : 'bg-black'} rounded-md m-[1px] absolute`} 
-				     style={{left: headPosition.left, top: headPosition.top}}>				    	
-				</div>
-				<div name='snakeComponent'
-					 className= 'h-[14px] w-[14px] bg-black rounded-md m-[1px] absolute' 
-				     style={{left: secondPosition.left, top: secondPosition.top}}>				    	
-				</div>
-				<div name='snakeComponent'
-					 className= 'h-[14px] w-[14px] bg-black rounded-md m-[1px] absolute' 
-				     style={{left: thirdPosition.left, top: thirdPosition.top}}>				    	
-				</div>
-				<div name='snakeComponent'
-					 className= 'h-[14px] w-[14px] bg-black rounded-md m-[1px] absolute' 
-				     style={{left: fourthPosition.left, top: fourthPosition.top}}>				    	
-				</div>
-
+			<Snakebody 
+			headPosition={headPosition} 
+			secondPosition={secondPosition}
+			thirdPosition={thirdPosition}
+			fourthPosition={fourthPosition}
+			direction={direction}	
+			wallCollision={wallCollision}
+			/>
 		</div>
 		</>
 	)

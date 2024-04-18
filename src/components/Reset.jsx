@@ -1,13 +1,20 @@
 import React from 'react';
-import { useState, useEffect } from 'react'; 
+import { useState, useEffect, useRef } from 'react'; 
 
 const Reset = ({gameStarted, setGameStarted}) => {
+	const resetIsMounted = useRef(false); 
 
 	const startNewGame = () => {
+
 		gameStarted === true? setGameStarted(false) : setGameStarted(true);
 	}
 
 	useEffect(() => {
+		if(!resetIsMounted.current) {
+			resetIsMounted.current = true;
+			return; 
+		}	
+
 		console.log('Game Started:', gameStarted);
 	}, [gameStarted]);
 

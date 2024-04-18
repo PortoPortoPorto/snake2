@@ -6,7 +6,7 @@ import Snakebody from './Snakebody';
 import Snakescreen from './Snakescreen';
 import Openingscreen from './Openingscreen';
 
-const Snakebox = ({gameStarted, setGameStarted}) => {
+const Snakebox = ({gameStarted}) => {
 	return (
 		<>
 			<div className = ' p-5 h-[480px] w-[800px] border border-solid border-black border-2 relative'>
