@@ -1,8 +1,7 @@
 import React from 'react'; 
 import { useState, useEffect } from 'react';
 
-const Snakebody = ({headPosition, secondPosition, thirdPosition, fourthPosition, direction, wallCollision}) => {
-	
+const Snakebody = ({headPosition, secondPosition, thirdPosition, fourthPosition, direction, wallCollision, fruitCollision}) => {
 
 
 	return (

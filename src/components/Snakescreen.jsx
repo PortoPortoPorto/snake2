@@ -10,11 +10,11 @@ const Snakescreen = ({gameStarted}) => {
 	const [fourthPosition, setFourthPosition] = useState({ left: 16, top: 16});
 	const [direction, setDirection] = useState('right'); 
 	const [wallCollision, setWallCollision] = useState(false); 
-	const [fruitCollision, setFruitCollision] = useState(false);
-	const [fruitLocation, setFruitLocation] = useState({left: '', top: ''});  
+	const [fruitCollision, setFruitCollision] = useState(false); 
 	const [count, setCount] = useState(0);
 	const snakeHasStarted = useRef(false); 
 	const wallInitialised = useRef(false); 
+	const fruitLoc = useRef(''); 
 
 
 	const handleArrowKey = (event) => {
@@ -46,44 +46,12 @@ const Snakescreen = ({gameStarted}) => {
 		}); 
 	}
 
-	const checkForFruitCollision = () => {
-		console.log(fruitLocation); 
+	const checkForFruitCollision = (fruitLocation) => {
+		fruitLoc.current = fruitLocation; 
+		if(fruitLoc.current.left === headPosition.left && fruitLoc.current.top === headPosition.top) {
+			setFruitCollision((f) => true);  
+		} 
 	}
-
-
-	useEffect(() => {
-	//add event listeners and set up state
-		window.addEventListener('keydown', handleArrowKey); 
-		if(snakeHasStarted.current === true)return; 
-		snakeHasStarted.current = true; 
-		window.addEventListener('keydown', handleArrowKey); 
-		return () => {
-		//clean up event listeners, direction etc	
-			window.removeEventListener('keydown', handleArrowKey);
-			setDirection(''); 
-		}; 
-	}, []); 
-
-	useEffect(() => {
-	//set up autoMove interval
-		const autoMoveInterval = setInterval(() => {
-			setDirection((d) => direction);
-			setHeadPosition((p) => headPosition);  
-			moveHead(direction, headPosition); 
-		}, 200);
-		return () => {
-			clearInterval(autoMoveInterval);
-		}
-	}, [headPosition, direction]);
-
-	useEffect(() => {
-		if(!wallInitialised.current){
-			wallInitialised.current = true;
-			return;
-		}
-		console.log('wall collision:', wallCollision);
-		wallCollision === true ? console.log('game over') : console.log('no collision');   
-	}, [wallCollision]); 
 
 
 	const moveHead = (direction, headPosition) => {
@@ -120,9 +88,49 @@ const Snakescreen = ({gameStarted}) => {
 		}
 		setHeadPosition((prevHeadPosition) => newHeadPosition); 
 		checkForWallCollision(newHeadPosition);
-		checkForFruitCollision(); 
+		checkForFruitCollision(fruitLoc.current); 
 	}; 
 
+		useEffect(() => {
+	//add event listeners and set up state
+		window.addEventListener('keydown', handleArrowKey); 
+		if(snakeHasStarted.current === true)return; 
+		snakeHasStarted.current = true; 
+		window.addEventListener('keydown', handleArrowKey); 
+		return () => {
+		//clean up event listeners, direction etc	
+			window.removeEventListener('keydown', handleArrowKey);
+			setDirection(''); 
+		}; 
+	}, []); 
+
+	useEffect(() => {
+	//set up autoMove interval
+		const autoMoveInterval = setInterval(() => {
+			setDirection((d) => direction);
+			setHeadPosition((p) => headPosition);  
+			moveHead(direction, headPosition); 
+		}, 200);
+		return () => {
+			clearInterval(autoMoveInterval);
+		}
+	}, [headPosition, direction]);
+
+	useEffect(() => {
+		if(!wallInitialised.current){
+			wallInitialised.current = true;
+			return;
+		}
+		console.log('wall collision:', wallCollision);
+		wallCollision === true ? console.log('game over') : '';   
+	}, [wallCollision]); 
+
+
+	useEffect(() => {
+		if(fruitCollision === false)return;
+
+		console.log('NOM NOM NOM NOM NOM NOM NOM'); 
+	}, [fruitCollision]);
 
 	return (
 		<>
@@ -134,12 +142,14 @@ const Snakescreen = ({gameStarted}) => {
 			fourthPosition={fourthPosition}
 			direction={direction}	
 			wallCollision={wallCollision}
+			fruitCollision={fruitCollision}
 			/>
 			<Fruit
 			headPosition={headPosition}
 			fruitCollision={fruitCollision}
-			fruitLocation={fruitLocation}
-			setFruitLocation={setFruitLocation}
+			onData={checkForFruitCollision}
+			fruitCollision={fruitCollision}
+			setFruitCollision={setFruitCollision}
 			/>
 		</div>
 		</>
