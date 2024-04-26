@@ -8,7 +8,6 @@ import Gameboard from './components/Gameboard';
 import Scorebox from './components/Scorebox';
 import Highscorebox from './components/Highscorebox';
 import Reset from './components/Reset';
-import Snakebox from './components/Snakebox';
 import Openingscreen from './components/Openingscreen'; 
 
 library.add(fas, far); 

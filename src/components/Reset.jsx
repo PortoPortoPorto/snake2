@@ -10,7 +10,7 @@ const Reset = ({gameStarted, setGameStarted}) => {
 	}
 
 	useEffect(() => {
-		if(!resetIsMounted.current) {
+		if(resetIsMounted.current === false) {
 			resetIsMounted.current = true;
 			return; 
 		}	

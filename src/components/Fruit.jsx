@@ -3,9 +3,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faAppleWhole} from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect, useRef} from 'react'; 
 
-const Fruit = ({headPosition, fruitCollision, setFruitCollision, onData}) => {
-	const [visibleFruit, setVisibleFruit] = useState(''); 
-	const [fruitLocation, setFruitLocation] = useState({left: '', top: ''}); 
+const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation, setFruitLocation}) => {
+	const [visibleFruit, setVisibleFruit] = useState('');  
 	const fruitIsSet = useRef(false); 
 
 
@@ -14,7 +13,8 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, onData}) => {
 			fruitLocation.left = 16 * (Math.floor(Math.random() * 50));
 			fruitLocation.top = 16 * (Math.floor(Math.random() * 28));
 			setFruitLocation({left: fruitLocation.left, top : fruitLocation.top})
-			onData(fruitLocation);  
+			console.log(fruitLocation)
+			console.log('fruit location set');  
 			fruitIsSet.current = true; 
 		} 
 	}, []);
@@ -24,7 +24,6 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, onData}) => {
 		fruitLocation.left = 16 * (Math.floor(Math.random() * 50));
 		fruitLocation.top = 16 * (Math.floor(Math.random() * 28));
 		setFruitLocation({left: fruitLocation.left, top : fruitLocation.top})
-		onData(fruitLocation); 
 		setFruitCollision(false); 
 	}, [fruitCollision]);
 
