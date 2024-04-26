@@ -38,9 +38,11 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 
 	
 	const moveBody = (newHeadPosition, headPosition) => {
+	//check for fruit collision to grow body
+		let grownBodyArray = growBody();
 	//create shallow copies of previous body position arrray, body position array and head position object
-		const copyOfPreviousBodyPos = [...previousBodyPositions]
-		let copyOfBodyPositions = [...bodyPositions];
+		const copyOfPreviousBodyPos = [...previousBodyPositions];
+		let copyOfBodyPositions = [...grownBodyArray];
 		const copyOfHeadPosition = {...headPosition};
 	//create new variable to replace the first body piece. new variable position moves to the (previous) head position
 		let firstPosition = {...copyOfBodyPositions[0] };
@@ -60,13 +62,29 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 	// set body positions to the updated shallow copy 
 		setBodyPositions((pBp) => copyOfBodyPositions);
 	//set previous body positions array to current positions, for the next movement
-		setPreviousBodyPositions((P) => bodyPositions); 
+		setPreviousBodyPositions((P) => grownBodyArray); 
 	}
 
 
 	const sendHeadPosition = () => {
 		const headPos = headPosition;
 		headData(headPos); 
+	}
+
+	const growBody = () => {
+	// if fruit collision hasn't occured, return same value
+		if(fruitCollision === false)return bodyPositions;
+	//create shallow copy of bodyPositions/previousBodyPositions arrays 
+		let copyOfBodyPositions = [...bodyPositions];
+		const copyOfPreviousBodyPos = [...previousBodyPositions]; 
+	//create new body piece, which takes the data from the final piece of previousBodyPos array 
+		const indexToCopy = copyOfPreviousBodyPos.length - 1;
+		let newBodyPiece = {...copyOfPreviousBodyPos[indexToCopy]};
+		newBodyPiece.id ++;
+		newBodyPiece.name = `Body ${indexToCopy + 2}`;
+		copyOfBodyPositions.push(newBodyPiece); 
+	//return grown body array to moveBody function
+		return copyOfBodyPositions; 
 	}
 
 
@@ -83,6 +101,13 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 			clearInterval(autoMoveInterval);
 		}
 	}, [headPosition, direction]);
+
+
+	useEffect(() => {
+		setPreviousBodyPositions([...bodyPositions]); 
+	}, [bodyPositions]); 
+
+
 
 	return (
 		<>		

@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Snakebody from './Snakebody'; 
 import Fruit from './Fruit'; 
 
-const Snakescreen = ({gameStarted}) => {
+const Snakescreen = ({gameStarted, currentScore, setCurrentScore}) => {
 	const [headPosition, setHeadPosition] = useState({ left: 64, top:16 });
 	const [bodyPositions, setBodyPositions] = useState([
 //initial array of body positions, to be passed to the snakeBody component for further updates 
@@ -17,7 +17,7 @@ const Snakescreen = ({gameStarted}) => {
 	const snakeHasStarted = useRef(false); 
 	const wallInitialised = useRef(false); 
 	const [fruitLocation, setFruitLocation] = useState({left: '', top: ''});
-	const fruitLoc = useRef({left: '', top: ''}); 
+	
 
 
 const handleArrowKey = (event) => {
@@ -36,11 +36,11 @@ const handleArrowKey = (event) => {
 	 	});
 	}
 
-	const checkForWallCollision = (newHeadPosition) => {
+	const checkForWallCollision = () => {
 		setWallCollision(prevWallCollision => {
-			if (newHeadPosition.top < 0 || newHeadPosition.top > 464) {
+			if (headPosition.top < 0 || headPosition.top > 464) {
 				return true; 
-			} else if (newHeadPosition.left < 0 || newHeadPosition.left > 784) {
+			} else if (headPosition.left < 0 || headPosition.left > 784) {
 				return true; 
 			}
 			return prevWallCollision; 	
@@ -48,17 +48,17 @@ const handleArrowKey = (event) => {
 	}
 
 	const checkForFruitCollision = () => {
-		console.log(fruitLocation); 
-		console.log(headPosition); 
-		
+	
 		if(fruitLocation.left === headPosition.left && fruitLocation.top === headPosition.top) {
+			console.log('YEAH'); 
+			setCurrentScore((prevScore) => prevScore + 1);  
 			setFruitCollision((f) => true);  
 		} 
 	}
 
 	const receiveHeadPosition = (headData) => {
 		checkForFruitCollision();  
-
+		checkForWallCollision(); 
 	}
 
 
@@ -87,11 +87,6 @@ const handleArrowKey = (event) => {
 	}, [wallCollision]); 
 
 
-	useEffect(() => {
-		if(fruitCollision === false)return;
-
-		console.log('NOM NOM NOM NOM NOM NOM NOM'); 
-	}, [fruitCollision]);
 
 	return (
 		<>
@@ -111,7 +106,6 @@ const handleArrowKey = (event) => {
 			/>
 			<Fruit
 			headPosition={headPosition}
-			fruitCollision={fruitCollision}
 			fruitCollision={fruitCollision}
 			setFruitCollision={setFruitCollision}
 			fruitLocation = {fruitLocation}
