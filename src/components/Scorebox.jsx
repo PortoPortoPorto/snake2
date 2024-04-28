@@ -1,6 +1,11 @@
-import React from 'react'
+import React from 'react';
+import { useState, useEffect } from 'react'; 
 
-const Scorebox = () => {
+const Scorebox = (score, setScore) => {
+
+	let scoreToRender = score;
+
+
 	return (
 		<>  
 			<div className = 'flex flex-col items-center justify-between'>
@@ -8,7 +13,7 @@ const Scorebox = () => {
 					Score
 				</div>
 				<div className = 'h-44 w-44 border border-solid border-black border-1 rounded-sm flex justify-center items-center'>
-					<h1 className = 'text-4xl'>0</h1>
+					<h1 className = 'text-4xl'>{scoreToRender.score}</h1>
 				</div>
 			</div>
 		</>

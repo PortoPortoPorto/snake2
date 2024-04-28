@@ -1,12 +1,14 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react'; 
 
-const Reset = ({gameStarted, setGameStarted}) => {
+const Reset = ({gameStarted, setGameStarted, gameOver, setGameOver, score, setScore}) => {
 	const resetIsMounted = useRef(false); 
 
 	const startNewGame = () => {
 
 		gameStarted === true? setGameStarted(false) : setGameStarted(true);
+		gameOver === true? setGameOver(false) : '';
+		setScore(0);  
 	}
 
 	useEffect(() => {

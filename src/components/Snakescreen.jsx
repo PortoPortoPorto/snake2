@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import Snakebody from './Snakebody'; 
 import Fruit from './Fruit'; 
 
-const Snakescreen = ({gameStarted, currentScore, setCurrentScore}) => {
+const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 	const [headPosition, setHeadPosition] = useState({ left: 64, top:16 });
 	const [bodyPositions, setBodyPositions] = useState([
 //initial array of body positions, to be passed to the snakeBody component for further updates 
@@ -14,9 +14,13 @@ const Snakescreen = ({gameStarted, currentScore, setCurrentScore}) => {
 	const [direction, setDirection] = useState('right');
 	const [wallCollision, setWallCollision] = useState(false); 
 	const [fruitCollision, setFruitCollision] = useState(false); 
+	const [bodyCollision, setBodyCollision] = useState(false); 
+	const [fruitLocation, setFruitLocation] = useState({left: '', top: ''});
 	const snakeHasStarted = useRef(false); 
 	const wallInitialised = useRef(false); 
-	const [fruitLocation, setFruitLocation] = useState({left: '', top: ''});
+	const bodyInitialised = useRef(false); 
+	const gameOverStateInitialised = useRef(false); 
+
 	
 
 
@@ -51,14 +55,23 @@ const handleArrowKey = (event) => {
 	
 		if(fruitLocation.left === headPosition.left && fruitLocation.top === headPosition.top) {
 			console.log('YEAH'); 
-			setCurrentScore((prevScore) => prevScore + 1);  
+			setScore((prevScore) => prevScore + 1);  
 			setFruitCollision((f) => true);  
 		} 
 	}
 
+	const checkForBodyCollision = () => {
+		bodyPositions.forEach((bodyPosition, index) => {
+			if(bodyPosition.left === headPosition.left && bodyPosition.top === headPosition.top) {
+				setBodyCollision((b) => true); 
+			}
+		});
+	}
+
 	const receiveHeadPosition = (headData) => {
 		checkForFruitCollision();  
-		checkForWallCollision(); 
+		checkForWallCollision();
+		checkForBodyCollision();  
 	}
 
 
@@ -66,7 +79,7 @@ const handleArrowKey = (event) => {
 	//add event listeners and set up state
 		window.addEventListener('keydown', handleArrowKey); 
 		if(snakeHasStarted.current === true)return; 
-		snakeHasStarted.current = true; 
+		snakeHasStarted.current = true;
 		window.addEventListener('keydown', handleArrowKey); 
 		return () => {
 		//clean up event listeners, direction etc	
@@ -76,17 +89,32 @@ const handleArrowKey = (event) => {
 	}, []); 
 
 
-
 	useEffect(() => {
-		if(!wallInitialised.current){
+		if(!wallInitialised.current) {
 			wallInitialised.current = true;
 			return;
 		}
 		console.log('wall collision:', wallCollision);
-		wallCollision === true ? console.log('game over') : '';   
+		wallCollision === true ? setGameOver(true) : '';   
 	}, [wallCollision]); 
 
+	useEffect(() => {
+		if(!bodyInitialised.current) {
+			bodyInitialised.current = true;
+			return; 
+		}
+		console.log('body collision:', bodyCollision);
+		bodyCollision === true? setGameOver(true) : ''; 
+	}, [bodyCollision])
 
+	useEffect(() => {
+		if(!gameOverStateInitialised.current) {
+			gameOverStateInitialised.current = true;
+			return;
+		}
+
+		console.log('game over:', gameOver); 
+	}, [gameOver])
 
 	return (
 		<>

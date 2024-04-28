@@ -16,12 +16,18 @@ library.add(fas, far);
 const App = () => {
 
   const [gameStarted, setGameStarted] = useState(false); 
+  const [gameOver, setGameOver] = useState(false);
+  const [score, setScore] = useState(0)
 
   return (
     <>
         <Header/>
-        <Gameboard gameStarted={gameStarted} setGameStarted={setGameStarted}/>
-        <Reset gameStarted={gameStarted} setGameStarted={setGameStarted}/>
+        <Gameboard gameStarted={gameStarted} setGameStarted={setGameStarted} 
+        gameOver={gameOver} setGameOver={setGameOver} 
+        score={score} setScore={setScore}/>
+        <Reset gameStarted={gameStarted} setGameStarted={setGameStarted} 
+        gameOver={gameOver} setGameOver={setGameOver}
+        score={score} setScore={setScore}/>
     </>
   )
 }
