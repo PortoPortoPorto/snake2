@@ -1,7 +1,8 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import Snakebody from './Snakebody'; 
-import Fruit from './Fruit'; 
+import Fruit from './Fruit';
+import over from '../assets/sounds/over.wav';  
 
 const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 	const [headPosition, setHeadPosition] = useState({ left: 64, top:16 });
@@ -20,8 +21,9 @@ const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 	const wallInitialised = useRef(false); 
 	const bodyInitialised = useRef(false); 
 	const gameOverStateInitialised = useRef(false); 
+	//create a ref to hold a reference to the audio object
+	const audioRef = useRef(null); 
 
-	
 
 
 const handleArrowKey = (event) => {
@@ -42,9 +44,9 @@ const handleArrowKey = (event) => {
 
 	const checkForWallCollision = () => {
 		setWallCollision(prevWallCollision => {
-			if (headPosition.top < 0 || headPosition.top > 464) {
+			if (headPosition.top < 0 || headPosition.top > 432) {
 				return true; 
-			} else if (headPosition.left < 0 || headPosition.left > 784) {
+			} else if (headPosition.left < 0 || headPosition.left > 752) {
 				return true; 
 			}
 			return prevWallCollision; 	
@@ -74,6 +76,13 @@ const handleArrowKey = (event) => {
 		checkForBodyCollision();  
 	}
 
+	const itsGameOver = () => {
+		console.log('game over dude'); 
+		audioRef.current.play();
+		const gameOverTimeout = setTimeout(() => {
+			setGameOver(true); 
+		}, 1000);
+	}
 
 		useEffect(() => {
 	//add event listeners and set up state
@@ -95,7 +104,9 @@ const handleArrowKey = (event) => {
 			return;
 		}
 		console.log('wall collision:', wallCollision);
-		wallCollision === true ? setGameOver(true) : '';   
+		if(wallCollision === true) {
+			itsGameOver();
+		}
 	}, [wallCollision]); 
 
 	useEffect(() => {
@@ -104,7 +115,7 @@ const handleArrowKey = (event) => {
 			return; 
 		}
 		console.log('body collision:', bodyCollision);
-		bodyCollision === true? setGameOver(true) : ''; 
+		bodyCollision === true? itsGameOver() : ''; 
 	}, [bodyCollision])
 
 	useEffect(() => {
@@ -112,7 +123,6 @@ const handleArrowKey = (event) => {
 			gameOverStateInitialised.current = true;
 			return;
 		}
-
 		console.log('game over:', gameOver); 
 	}, [gameOver])
 
@@ -124,6 +134,7 @@ const handleArrowKey = (event) => {
 			direction={direction}
 			setDirection={setDirection}	
 			wallCollision={wallCollision}
+			bodyCollision={bodyCollision}
 			fruitCollision={fruitCollision}
 			onData={checkForWallCollision}
 			headData={receiveHeadPosition}
@@ -140,6 +151,7 @@ const handleArrowKey = (event) => {
 			setFruitLocation = {setFruitLocation}
 			/>
 		</div>
+		<audio ref={audioRef} src={over}/>
 		</>
 	)
 }

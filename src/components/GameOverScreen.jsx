@@ -1,9 +1,11 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const GameOverScreen = (score) => {
 	
 	let scoreToRender = score;
+	//create a ref to hold a reference to the audio object
+
 
 	return (
 		<>

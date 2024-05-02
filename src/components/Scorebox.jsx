@@ -12,8 +12,8 @@ const Scorebox = (score, setScore) => {
 				<div className = 'text-3xl m-2'>
 					Score
 				</div>
-				<div className = 'h-44 w-44 border border-solid border-black border-1 rounded-sm flex justify-center items-center'>
-					<h1 className = 'text-4xl'>{scoreToRender.score}</h1>
+				<div className = 'h-44 w-44 border border-solid border-black border-2 rounded-sm flex justify-center items-center'>
+					<h1 className = 'text-5xl'>{scoreToRender.score}</h1>
 				</div>
 			</div>
 		</>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react'; 
+import { useState, useRef, useEffect } from 'react'; 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
@@ -18,13 +18,18 @@ const App = () => {
   const [gameStarted, setGameStarted] = useState(false); 
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0)
+  const [highScore, setHighScore] = useState(0);
+
+
+
 
   return (
     <>
         <Header/>
         <Gameboard gameStarted={gameStarted} setGameStarted={setGameStarted} 
         gameOver={gameOver} setGameOver={setGameOver} 
-        score={score} setScore={setScore}/>
+        score={score} setScore={setScore}
+        highScore={highScore} setHighScore={setHighScore}/>
         <Reset gameStarted={gameStarted} setGameStarted={setGameStarted} 
         gameOver={gameOver} setGameOver={setGameOver}
         score={score} setScore={setScore}/>

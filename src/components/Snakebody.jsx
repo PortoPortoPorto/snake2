@@ -1,10 +1,11 @@
 import React from 'react'; 
 import { useState, useEffect, useRef } from 'react';
 
-const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositions, direction, setDirection, wallCollision, fruitCollision, handleArrowKey, onData, headData}) => {	
+const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositions, direction, setDirection, wallCollision, bodyCollision, fruitCollision, handleArrowKey, onData, headData}) => {	
 	
 	const [previousBodyPositions, setPreviousBodyPositions] = useState([...bodyPositions]); 
 	const [previousHeadPosition, setPreviousHeadPosition] = useState({...headPosition}); 
+	const [movementSpeed, setMovementSpeed] = useState(200); 
 	const firstMove = useRef(true); 
 
 
@@ -83,30 +84,38 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 		newBodyPiece.id ++;
 		newBodyPiece.name = `Body ${indexToCopy + 2}`;
 		copyOfBodyPositions.push(newBodyPiece); 
+		speedUpBody(); 
 	//return grown body array to moveBody function
 		return copyOfBodyPositions; 
 	}
 
 
+	const speedUpBody = () => {
+		// speed up movement speed marginally on each fruit collision
+		setMovementSpeed((m) => m - 2.5);
+		console.log(movementSpeed);  
+	}
+
+
 		useEffect(() => {
-	//set up autoMove interval
+	//set up autoMove interval. Interval resets on any change of headposition, direction or movementspeed (fruitCollision)
 		const autoMoveInterval = setInterval(() => {
 			setDirection((d) => direction);
 			setHeadPosition((p) => headPosition);  
 			moveHead(direction, headPosition, bodyPositions, setBodyPositions);
 			sendHeadPosition(); 
 
-		}, 200);
+		}, movementSpeed);
+		if(wallCollision === true || bodyCollision === true )clearInterval(autoMoveInterval);
 		return () => {
 			clearInterval(autoMoveInterval);
 		}
-	}, [headPosition, direction]);
+	}, [headPosition, direction, movementSpeed]);
 
 
 	useEffect(() => {
 		setPreviousBodyPositions([...bodyPositions]); 
 	}, [bodyPositions]); 
-
 
 
 	return (

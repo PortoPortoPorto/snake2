@@ -11,19 +11,16 @@ import GameOverScreen from './GameOverScreen';
 import { useState, useEffect } from 'react'; 
 
 
-const Gameboard = ({gameStarted, gameOver, setGameOver, score, setScore}) => {
+const Gameboard = ({gameStarted, gameOver, setGameOver, score, setScore, highScore, setHighScore}) => {
 	
 
-	useEffect(() => {
-		console.log('Current Score:', score); 
-	}, [score]);
 
 	return (
 		<>	
 			<div className = 'h-auto w-full p-5 mt-5 flex justify-around items-center'>
 				<Scorebox score={score}
 				setScore={setScore}/>
-				<div className = ' p-5 h-[480px] w-[800px] border border-solid border-black border-2 relative'>
+				<div className = ' p-5 h-[480px] w-[800px] border border-solid border-black border-[15px] relative'>
 					{gameStarted? (
 						gameOver? <GameOverScreen score={score}/>  : <Snakescreen 
 						gameStarted={gameStarted} 
@@ -34,7 +31,13 @@ const Gameboard = ({gameStarted, gameOver, setGameOver, score, setScore}) => {
 						<Openingscreen/>
 						)}
 				</div>
-				<Highscorebox/>	
+				<Highscorebox 
+				score={score} 
+				setScore={setScore}
+				highScore={highScore} 
+				setHighScore={setHighScore}
+				gameStarted={gameStarted}
+				gameOver={gameOver}/>	
 			</div>		
 		</>
 	)
