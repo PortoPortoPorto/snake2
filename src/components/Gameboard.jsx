@@ -22,7 +22,8 @@ const Gameboard = ({gameStarted, gameOver, setGameOver, score, setScore, highSco
 				setScore={setScore}/>
 				<div className = ' p-5 h-[480px] w-[800px] border border-solid border-black border-[15px] relative'>
 					{gameStarted? (
-						gameOver? <GameOverScreen score={score}/>  : <Snakescreen 
+						gameOver? <GameOverScreen score={score}/>  : 
+						<Snakescreen 
 						gameStarted={gameStarted} 
 						score={score} 
 						setScore={setScore}

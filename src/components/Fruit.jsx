@@ -51,16 +51,21 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation,
 	const rollForGoldenFruit = () => {
 		let rolledNumber = Math.floor(Math.random() * 100);
 		console.log(rolledNumber);
-		rolledNumber >= 20? goldenFruit(): ''; 
+		rolledNumber >= 90? goldenFruit(): ''; 
 	}
 
 	const fruit = () => {
-		fruitLocation.left = 16 * (Math.floor(Math.random() * 48));
-		fruitLocation.top = 16 * (Math.floor(Math.random() * 27));
+		let fruitLocation = randomFruit(); 
 	//check to see it fruit spawns on occupied tile, if so, rerun function	
-		bodyPositions.forEach((bodyPosition) => {
-			if(bodyPosition.left === fruitLocation.left || bodyPosition.top === fruitLocation.top)fruit();
-		});
+		let fruitOccupied = bodyPositions.some(bodyPosition => 
+			(bodyPosition.left === fruitLocation.left && bodyPosition.top === fruitLocation.top));
+		if(fruitOccupied){
+			fruitLocation = randomFruit();
+		} if(fruitOccupied){
+			fruitLocation = randomFruit();
+		} if(fruitOccupied){
+			fruitLocation = randomFruit();
+		} 
 		setFruitLocation({left: fruitLocation.left, top : fruitLocation.top})
 		setFruitCollision(false); 
 	}
@@ -69,18 +74,25 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation,
 		//if golden fruit has already been set, return 
 		if(goldenFruitSet.current === true)return; 
 		//set golden fruit location and place on board. set timeout for removal of golden fruit 
-		goldenFruitLocation.left = 16 * (Math.floor(Math.random() * 48));
-		goldenFruitLocation.top = 16 * (Math.floor(Math.random() * 27));
+		let goldenFruitLocation = randomFruit(); 
 	//check to see it fruit spawns on occupied tile, if so, rerun function
-		bodyPositions.forEach((bodyPosition) => {
-			if(bodyPosition.left === goldenFruitLocation.left || bodyPosition.top === goldenFruitLocation.top)goldenFruit();
-		});
+		let fruitOccupied = bodyPositions.some(bodyPosition => 
+			(bodyPosition.left === goldenFruitLocation.left && bodyPosition.top === goldenFruitLocation.top));
+	//if fruit would spawn on occupied tile, return. If not, spawn golden fruit
+		if(fruitOccupied) return;
 		setGoldenFruitLocation({left: goldenFruitLocation.left, top: goldenFruitLocation.top});
 		goldenFruitSet.current = true; 
 		const goldenFruitTimeout = setTimeout (() => {
 			goldenFruitSet.current = false;
 			setGoldenFruitLocation({left: '', top: ''});
 		}, 5000);
+	}
+
+	const randomFruit = () => {
+		const fruit = {left: '', top: ''};
+		fruit.left = 16 * (Math.floor(Math.random() * 48));
+		fruit.top = 16 * (Math.floor(Math.random() * 27));
+		return fruit; 
 	}
 
 

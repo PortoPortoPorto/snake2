@@ -26,10 +26,13 @@ const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 	//create a ref to hold a reference to the audio object
 	const audioRef = useRef(null); 
 	const directionRef = useRef('');
+	const arrowClicked = useRef(false); 
 
 
-
-const handleArrowKey = (event) => { 
+	const handleArrowKey = (event) => { 
+	// if arrow has been clicked already within the current move interval, return. Otherwise, set direction 	
+	 	if(arrowClicked.current === true)return;
+	 	arrowClicked.current = true; 	
 	 	setDirection(prevDirection => {
 	 		if(event.key === 'ArrowRight') {
 	 			if(directionRef.current === 'left') {
@@ -56,19 +59,14 @@ const handleArrowKey = (event) => {
 	 				return 'down'; 
 	 			}
 	 		} 
-
 	 		return direction; 
-	 	});
-	 
-
+	 	});	
 	}
 
-	useEffect(() => {
-		console.log('direction:', direction);
-		directionRef.current = direction; 
-	 	console.log('directionRef:', directionRef.current);
-	}, [direction]);
-
+//reset arrow clicked ref, called in snakebody automove function at intervals
+	const arrowReset = (arrowState) => {
+		arrowClicked.current = arrowState;
+	}
 
 	const checkForWallCollision = () => {
 		setWallCollision(prevWallCollision => {
@@ -81,10 +79,8 @@ const handleArrowKey = (event) => {
 		}); 
 	}
 
-	const checkForFruitCollision = () => {
-	
+	const checkForFruitCollision = () => {	
 		if(fruitLocation.left === headPosition.left && fruitLocation.top === headPosition.top) {
-			console.log('YEAH!'); 
 			setScore((prevScore) => prevScore + 1);  
 			setFruitCollision((f) => true);  
 		} 
@@ -92,7 +88,6 @@ const handleArrowKey = (event) => {
 
 	const checkForGoldenFruitCollision = () => {
 		if(goldenFruitLocation.left === headPosition.left && goldenFruitLocation.top === headPosition.top) {
-			console.log('GOLD!');
 			setScore((prevScore) => prevScore + 5); 
 			setGoldenFruitCollision((g) => true); 			
 		}
@@ -114,7 +109,6 @@ const handleArrowKey = (event) => {
 	}
 
 	const itsGameOver = () => {
-		console.log('game over dude'); 
 		audioRef.current.play();
 		const gameOverTimeout = setTimeout(() => {
 			setGameOver(true); 
@@ -134,7 +128,7 @@ const handleArrowKey = (event) => {
 		}; 
 	}, []); 
 
-
+	//handle body collision, wall collision and game over states 
 	useEffect(() => {
 		if(!wallInitialised.current) {
 			wallInitialised.current = true;
@@ -163,6 +157,11 @@ const handleArrowKey = (event) => {
 		console.log('game over:', gameOver); 
 	}, [gameOver])
 
+	useEffect(() => {
+		directionRef.current = direction; 
+	}, [direction]);
+
+
 	return (
 		<>
 		<div className='h-full w-full p-5  justify-center items-center'>
@@ -180,6 +179,7 @@ const handleArrowKey = (event) => {
 			setHeadPosition={setHeadPosition}
 			bodyPositions={bodyPositions}
 			setBodyPositions={setBodyPositions}
+			arrowData={arrowReset}
 			/>
 			<Fruit
 			headPosition={headPosition}

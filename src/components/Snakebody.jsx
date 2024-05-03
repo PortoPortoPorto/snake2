@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 
 const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositions, 
 	direction, setDirection, wallCollision, bodyCollision, fruitCollision, 
-	goldenFruitCollision, handleArrowKey, onData, headData}) => {	
+	goldenFruitCollision, handleArrowKey, onData, headData, arrowData}) => {	
 	
 	const [previousBodyPositions, setPreviousBodyPositions] = useState([...bodyPositions]); 
 	const [previousHeadPosition, setPreviousHeadPosition] = useState({...headPosition});
@@ -11,7 +11,7 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 	const [movementSpeed, setMovementSpeed] = useState(200); 
 	const firstMove = useRef(true); 
 
-
+	// Move snake head based on previous position and current direction
 	const moveHead = (direction, headPosition, bodyPositions, setBodyPositions) => {
 			const previousLeftPosition = headPosition.left;
 			const previousTopPosition = headPosition.top;
@@ -69,7 +69,7 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 		setPreviousBodyPositions((P) => grownBodyArray); 
 	}
 
-
+	// Send head position to SnakeScreen Component
 	const sendHeadPosition = () => {
 		const headPos = headPosition;
 		headData(headPos); 
@@ -95,18 +95,19 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 
 	const speedUpBody = () => {
 		// speed up movement speed marginally on each fruit collision
-		setMovementSpeed((m) => m - 2.5); 
+		setMovementSpeed((m) => m * .99);
+		console.log(movementSpeed);  
 	}
 
 
 		useEffect(() => {
 	//set up autoMove interval. Interval resets on any change of headposition, direction or movementspeed (fruitCollision)
 		const autoMoveInterval = setInterval(() => {
+			arrowData(false); 
 			setDirection((d) => direction);
 			setHeadPosition((p) => headPosition);  
 			moveHead(direction, headPosition, bodyPositions, setBodyPositions);
 			sendHeadPosition(); 
-
 		}, movementSpeed);
 		if(wallCollision === true || bodyCollision === true )clearInterval(autoMoveInterval);
 		return () => {
@@ -124,7 +125,7 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 		setGoldBody(true);
 		const goldTimeout = setTimeout(() => {
 			setGoldBody(false); 
-		}, 200);
+		}, 175);
 	}, [goldenFruitCollision]); 
 
 	return (
