@@ -16,31 +16,59 @@ const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 	const [wallCollision, setWallCollision] = useState(false); 
 	const [fruitCollision, setFruitCollision] = useState(false); 
 	const [bodyCollision, setBodyCollision] = useState(false); 
+	const [goldenFruitCollision, setGoldenFruitCollision] = useState(false); 
 	const [fruitLocation, setFruitLocation] = useState({left: '', top: ''});
+	const [goldenFruitLocation, setGoldenFruitLocation] = useState({left: '', top: ''}); 
 	const snakeHasStarted = useRef(false); 
 	const wallInitialised = useRef(false); 
 	const bodyInitialised = useRef(false); 
 	const gameOverStateInitialised = useRef(false); 
 	//create a ref to hold a reference to the audio object
 	const audioRef = useRef(null); 
+	const directionRef = useRef('');
 
 
 
-const handleArrowKey = (event) => {
+const handleArrowKey = (event) => { 
 	 	setDirection(prevDirection => {
-	 		if(event.key === 'ArrowRight' && prevDirection !== 'left') {
-	 			return 'right';
-	 		} else if(event.key === 'ArrowLeft' && prevDirection !== 'right') {
-	 			return 'left'; 
-	 		} else if(event.key === 'ArrowUp' && prevDirection !== 'down') {
-	 			return 'up';
-	 		} else if(event.key === 'ArrowDown' && prevDirection !== 'up') {
-	 			return 'down'; 
+	 		if(event.key === 'ArrowRight') {
+	 			if(directionRef.current === 'left') {
+	 				return 'left';
+	 			} else {
+	 				return 'right';
+	 			}	
+	 		} else if(event.key === 'ArrowLeft') {
+	 			if(directionRef.current === 'right') {
+	 				return 'right';
+	 			} else {
+	 				return 'left'; 
+	 			}
+	 		} else if(event.key === 'ArrowUp') {
+	 			if(directionRef.current === 'down') {
+	 				return 'down'; 
+	 			} else {
+	 				return 'up'; 
+	 			}
+	 		} else if(event.key === 'ArrowDown') {
+	 			if(directionRef.current === 'up') {
+	 				return 'up';
+	 			} else {
+	 				return 'down'; 
+	 			}
 	 		} 
 
 	 		return direction; 
 	 	});
+	 
+
 	}
+
+	useEffect(() => {
+		console.log('direction:', direction);
+		directionRef.current = direction; 
+	 	console.log('directionRef:', directionRef.current);
+	}, [direction]);
+
 
 	const checkForWallCollision = () => {
 		setWallCollision(prevWallCollision => {
@@ -56,10 +84,18 @@ const handleArrowKey = (event) => {
 	const checkForFruitCollision = () => {
 	
 		if(fruitLocation.left === headPosition.left && fruitLocation.top === headPosition.top) {
-			console.log('YEAH'); 
+			console.log('YEAH!'); 
 			setScore((prevScore) => prevScore + 1);  
 			setFruitCollision((f) => true);  
 		} 
+	}
+
+	const checkForGoldenFruitCollision = () => {
+		if(goldenFruitLocation.left === headPosition.left && goldenFruitLocation.top === headPosition.top) {
+			console.log('GOLD!');
+			setScore((prevScore) => prevScore + 5); 
+			setGoldenFruitCollision((g) => true); 			
+		}
 	}
 
 	const checkForBodyCollision = () => {
@@ -73,7 +109,8 @@ const handleArrowKey = (event) => {
 	const receiveHeadPosition = (headData) => {
 		checkForFruitCollision();  
 		checkForWallCollision();
-		checkForBodyCollision();  
+		checkForBodyCollision();
+		checkForGoldenFruitCollision();   
 	}
 
 	const itsGameOver = () => {
@@ -136,6 +173,7 @@ const handleArrowKey = (event) => {
 			wallCollision={wallCollision}
 			bodyCollision={bodyCollision}
 			fruitCollision={fruitCollision}
+			goldenFruitCollision={goldenFruitCollision}
 			onData={checkForWallCollision}
 			headData={receiveHeadPosition}
 			headPosition={headPosition}
@@ -147,8 +185,13 @@ const handleArrowKey = (event) => {
 			headPosition={headPosition}
 			fruitCollision={fruitCollision}
 			setFruitCollision={setFruitCollision}
-			fruitLocation = {fruitLocation}
-			setFruitLocation = {setFruitLocation}
+			fruitLocation={fruitLocation}
+			setFruitLocation={setFruitLocation}
+			goldenFruitLocation={goldenFruitLocation}
+			setGoldenFruitLocation={setGoldenFruitLocation}
+			goldenFruitCollision={goldenFruitCollision}
+			setGoldenFruitCollision={setGoldenFruitCollision}
+			bodyPositions={bodyPositions}
 			/>
 		</div>
 		<audio ref={audioRef} src={over}/>

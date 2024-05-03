@@ -3,12 +3,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {faAppleWhole} from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect, useRef} from 'react'; 
 import munch from '../assets/sounds/munch.wav';
+import gold from '../assets/sounds/gold.wav'; 
 
-const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation, setFruitLocation}) => {
-	const [visibleFruit, setVisibleFruit] = useState('');  
+const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation, 
+	setFruitLocation, goldenFruitLocation, setGoldenFruitLocation,
+	goldenFruitCollision, setGoldenFruitCollision, bodyPositions}) => {
+	const goldenFruitSet = useRef(false); 
 	const fruitIsSet = useRef(false);
 	//create a ref to hold a reference to the audio object
 	const audioRef = useRef(null); 
+	const goldAudioRef = useRef(null); 
 
 	useEffect(() => {
 		if(!fruitIsSet.current) { 
@@ -22,14 +26,61 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation, 
 	useEffect(() => {
 		if(fruitCollision === false)return; 
 		munchSound(); 
-		fruitLocation.left = 16 * (Math.floor(Math.random() * 48));
-		fruitLocation.top = 16 * (Math.floor(Math.random() * 27));
-		setFruitLocation({left: fruitLocation.left, top : fruitLocation.top})
-		setFruitCollision(false); 
+		rollForGoldenFruit(); 
+		fruit(); 
 	}, [fruitCollision]);
+
+	useEffect(() => {
+		if(goldenFruitCollision === false)return; 
+		goldSound();
+		goldenFruitSet.current = false; 
+		setGoldenFruitCollision((g) => false); 
+	}, [goldenFruitCollision]);
+
 
 	const munchSound = () => {
 		audioRef.current.play(); 
+	}
+
+	const goldSound = () => {
+		goldAudioRef.current.play(); 
+	}
+
+
+    // roll to see if golden fruit will materialise 
+	const rollForGoldenFruit = () => {
+		let rolledNumber = Math.floor(Math.random() * 100);
+		console.log(rolledNumber);
+		rolledNumber >= 20? goldenFruit(): ''; 
+	}
+
+	const fruit = () => {
+		fruitLocation.left = 16 * (Math.floor(Math.random() * 48));
+		fruitLocation.top = 16 * (Math.floor(Math.random() * 27));
+	//check to see it fruit spawns on occupied tile, if so, rerun function	
+		bodyPositions.forEach((bodyPosition) => {
+			if(bodyPosition.left === fruitLocation.left || bodyPosition.top === fruitLocation.top)fruit();
+		});
+		setFruitLocation({left: fruitLocation.left, top : fruitLocation.top})
+		setFruitCollision(false); 
+	}
+
+	const goldenFruit = () => {
+		//if golden fruit has already been set, return 
+		if(goldenFruitSet.current === true)return; 
+		//set golden fruit location and place on board. set timeout for removal of golden fruit 
+		goldenFruitLocation.left = 16 * (Math.floor(Math.random() * 48));
+		goldenFruitLocation.top = 16 * (Math.floor(Math.random() * 27));
+	//check to see it fruit spawns on occupied tile, if so, rerun function
+		bodyPositions.forEach((bodyPosition) => {
+			if(bodyPosition.left === goldenFruitLocation.left || bodyPosition.top === goldenFruitLocation.top)goldenFruit();
+		});
+		setGoldenFruitLocation({left: goldenFruitLocation.left, top: goldenFruitLocation.top});
+		goldenFruitSet.current = true; 
+		const goldenFruitTimeout = setTimeout (() => {
+			goldenFruitSet.current = false;
+			setGoldenFruitLocation({left: '', top: ''});
+		}, 5000);
 	}
 
 
@@ -38,7 +89,12 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation, 
 			<FontAwesomeIcon icon={faAppleWhole} 
 			className='text-[14px] absolute m-[1px]'
 			style={{left: fruitLocation.left, top: fruitLocation.top}}/>
+			{goldenFruitSet.current ? <FontAwesomeIcon icon={faAppleWhole} 
+			className='text-[14px] text-amber-200 absolute m-[1px]'
+			style={{left: goldenFruitLocation.left, top: goldenFruitLocation.top}}/> : ''}
 			<audio ref={audioRef} src={munch}/>
+			<audio ref={goldAudioRef} src={gold}/>
+
 		</>
 	)
 }

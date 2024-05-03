@@ -1,10 +1,13 @@
 import React from 'react'; 
 import { useState, useEffect, useRef } from 'react';
 
-const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositions, direction, setDirection, wallCollision, bodyCollision, fruitCollision, handleArrowKey, onData, headData}) => {	
+const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositions, 
+	direction, setDirection, wallCollision, bodyCollision, fruitCollision, 
+	goldenFruitCollision, handleArrowKey, onData, headData}) => {	
 	
 	const [previousBodyPositions, setPreviousBodyPositions] = useState([...bodyPositions]); 
-	const [previousHeadPosition, setPreviousHeadPosition] = useState({...headPosition}); 
+	const [previousHeadPosition, setPreviousHeadPosition] = useState({...headPosition});
+	const [goldBody, setGoldBody] = useState(false);  
 	const [movementSpeed, setMovementSpeed] = useState(200); 
 	const firstMove = useRef(true); 
 
@@ -92,8 +95,7 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 
 	const speedUpBody = () => {
 		// speed up movement speed marginally on each fruit collision
-		setMovementSpeed((m) => m - 2.5);
-		console.log(movementSpeed);  
+		setMovementSpeed((m) => m - 2.5); 
 	}
 
 
@@ -117,18 +119,25 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 		setPreviousBodyPositions([...bodyPositions]); 
 	}, [bodyPositions]); 
 
+	useEffect(() => {
+		if(goldenFruitCollision === false)return; 
+		setGoldBody(true);
+		const goldTimeout = setTimeout(() => {
+			setGoldBody(false); 
+		}, 200);
+	}, [goldenFruitCollision]); 
 
 	return (
 		<>		
 				<div name='snakeComponent'
-					 className= {`h-[14px] w-[14px] ${wallCollision ? 'bg-[#647564]' : 'bg-black'} rounded-md m-[1px] absolute`} 
+					 className= {`h-[14px] w-[14px] ${wallCollision ? ('bg-[#647564]' ) : goldBody? ( 'bg-amber-200') : ('bg-black')} rounded-md m-[1px] absolute`}
 				     style={{left: headPosition.left, top: headPosition.top}}>				    	
 				</div>
 				{bodyPositions.map((bodyPosition, index) => (
 					<div 
 						key={index}
 						name='snakeComponent'
-						className= 'h-[14px] w-[14px] bg-black rounded-md m-[1px] absolute' 
+						className= {`h-[14px] w-[14px] ${goldBody ? 'bg-amber-200' : 'bg-black'} rounded-md m-[1px] absolute`}  
 						style={{left: bodyPosition.left, top: bodyPosition.top}}
 					></div>
 				))}	
