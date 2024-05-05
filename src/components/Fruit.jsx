@@ -14,6 +14,7 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation,
 	const audioRef = useRef(null); 
 	const goldAudioRef = useRef(null); 
 
+	// set random fruit location on mount
 	useEffect(() => {
 		if(!fruitIsSet.current) { 
 			fruitLocation.left = 16 * (Math.floor(Math.random() * 48));
@@ -23,6 +24,7 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation,
 		} 
 	}, []);
 
+	// trigger sound and fruit respawn, on fruit collision state 
 	useEffect(() => {
 		if(fruitCollision === false)return; 
 		munchSound(); 
@@ -30,6 +32,7 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation,
 		fruit(); 
 	}, [fruitCollision]);
 
+	// trigger sound and reset golden fruit state on golden fruit collision
 	useEffect(() => {
 		if(goldenFruitCollision === false)return; 
 		goldSound();
@@ -51,7 +54,7 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation,
 	const rollForGoldenFruit = () => {
 		let rolledNumber = Math.floor(Math.random() * 100);
 		console.log(rolledNumber);
-		rolledNumber >= 90? goldenFruit(): ''; 
+		rolledNumber >= 85? goldenFruit(): ''; 
 	}
 
 	const fruit = () => {
@@ -88,6 +91,7 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation,
 		}, 5000);
 	}
 
+	// return a randomised fruit location
 	const randomFruit = () => {
 		const fruit = {left: '', top: ''};
 		fruit.left = 16 * (Math.floor(Math.random() * 48));
@@ -102,7 +106,7 @@ const Fruit = ({headPosition, fruitCollision, setFruitCollision, fruitLocation,
 			className='text-[14px] absolute m-[1px]'
 			style={{left: fruitLocation.left, top: fruitLocation.top}}/>
 			{goldenFruitSet.current ? <FontAwesomeIcon icon={faAppleWhole} 
-			className='text-[14px] text-amber-200 absolute m-[1px]'
+			className='text-[14px] text-orange-300 absolute m-[1px]'
 			style={{left: goldenFruitLocation.left, top: goldenFruitLocation.top}}/> : ''}
 			<audio ref={audioRef} src={munch}/>
 			<audio ref={goldAudioRef} src={gold}/>

@@ -1,9 +1,11 @@
 import React from 'react'; 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-const Highscorebox = ({score, setScore, highScore, setHighScore, gameOver, gameStarted}) => {
+const Highscorebox = ({score, setScore, highScore, setHighScore, gameOver, gameStarted, newHighScore}) => {
 
 	const [highScoreFromStorage, setHighScoreFromStorage] = useState(0)
+	const [newHighScoreFlash, setNewHighScoreFlash] = useState(false); 
+
 
 	const checkForHighScore = () => {
 		//if score is higher than high scores in local storage and in game, set as high score and set in storage
@@ -13,7 +15,7 @@ const Highscorebox = ({score, setScore, highScore, setHighScore, gameOver, gameS
 				setHighScoreFromStorage(score);
 				localStorage.setItem('high', JSON.stringify(score));
 				setHighScore(score); 
-				console.log('new high score set at:', score); 
+				console.log('new high score set at:', score);
 			} else {
 				setHighScore(highScoreFromStorage); 
 			}
@@ -23,7 +25,7 @@ const Highscorebox = ({score, setScore, highScore, setHighScore, gameOver, gameS
 	//check local storage for high score, to be returned as current high score on mount
 	const getHighScore = () => {
 		const storedHighScore = localStorage.getItem('high');
-		if(!storedHighScore)return 'null';  
+		if(!storedHighScore)return 0;  
 		const parsedScore = JSON.parse(storedHighScore);
 		setHighScoreFromStorage(parsedScore);
 		return parsedScore; 
@@ -32,7 +34,7 @@ const Highscorebox = ({score, setScore, highScore, setHighScore, gameOver, gameS
 
 	//retrieve highScoreData from local storage on mount 
 	useEffect(() => {
-		setHighScore(getHighScore());  
+		setHighScore(getHighScore()); 
 	}, []);
 
 
@@ -41,6 +43,14 @@ const Highscorebox = ({score, setScore, highScore, setHighScore, gameOver, gameS
 		checkForHighScore();
 	}, [score]);
 
+	useEffect(() => {
+		if(!gameStarted)return;
+		setNewHighScoreFlash(true);
+		const highScoreFlash = setTimeout(() => {
+			setNewHighScoreFlash(false);
+		}, 200); 
+	}, [highScore]);
+
 	return (
 		<>
 			<div className = 'flex flex-col items-center justify-between'>
@@ -48,7 +58,7 @@ const Highscorebox = ({score, setScore, highScore, setHighScore, gameOver, gameS
 					High Score
 				</div>
 				<div className = 'h-44 w-44 border border-solid border-black border-2 rounded-sm flex justify-center items-center'>
-					<h1 className = 'text-5xl'>{highScore}</h1>
+					<h1 className ={`text-5xl ${newHighScoreFlash ? 'text-orange-300 text-7xl' : ''}`}>{highScore}</h1> 
 				</div>
 			</div>
 		</>

@@ -23,7 +23,7 @@ const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 	const wallInitialised = useRef(false); 
 	const bodyInitialised = useRef(false); 
 	const gameOverStateInitialised = useRef(false); 
-	//create a ref to hold a reference to the audio object
+	//create a ref to hold a reference to audio objects
 	const audioRef = useRef(null); 
 	const directionRef = useRef('');
 	const arrowClicked = useRef(false); 
@@ -63,11 +63,12 @@ const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 	 	});	
 	}
 
-//reset arrow clicked ref, called in snakebody automove function at intervals
+    //reset arrow clicked ref, called in snakebody automove function at intervals
 	const arrowReset = (arrowState) => {
 		arrowClicked.current = arrowState;
 	}
 
+    // check if snake head has collided with the game walls
 	const checkForWallCollision = () => {
 		setWallCollision(prevWallCollision => {
 			if (headPosition.top < 0 || headPosition.top > 432) {
@@ -79,6 +80,7 @@ const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 		}); 
 	}
 
+	// check if the snake head has collided with fruit 
 	const checkForFruitCollision = () => {	
 		if(fruitLocation.left === headPosition.left && fruitLocation.top === headPosition.top) {
 			setScore((prevScore) => prevScore + 1);  
@@ -86,6 +88,7 @@ const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 		} 
 	}
 
+	// check if snake head has collided with golden fruit 
 	const checkForGoldenFruitCollision = () => {
 		if(goldenFruitLocation.left === headPosition.left && goldenFruitLocation.top === headPosition.top) {
 			setScore((prevScore) => prevScore + 5); 
@@ -93,6 +96,7 @@ const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 		}
 	}
 
+	// check if snake head has collided with snake body 
 	const checkForBodyCollision = () => {
 		bodyPositions.forEach((bodyPosition, index) => {
 			if(bodyPosition.left === headPosition.left && bodyPosition.top === headPosition.top) {
@@ -101,6 +105,7 @@ const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 		});
 	}
 
+	//receive head position from child component (snakeBody) and run all neccessary checks
 	const receiveHeadPosition = (headData) => {
 		checkForFruitCollision();  
 		checkForWallCollision();
@@ -108,6 +113,7 @@ const Snakescreen = ({gameStarted, score, setScore, gameOver, setGameOver}) => {
 		checkForGoldenFruitCollision();   
 	}
 
+	//set game over sound and state 
 	const itsGameOver = () => {
 		audioRef.current.play();
 		const gameOverTimeout = setTimeout(() => {

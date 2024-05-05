@@ -96,7 +96,6 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 	const speedUpBody = () => {
 		// speed up movement speed marginally on each fruit collision
 		setMovementSpeed((m) => m * .99);
-		console.log(movementSpeed);  
 	}
 
 
@@ -120,6 +119,8 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 		setPreviousBodyPositions([...bodyPositions]); 
 	}, [bodyPositions]); 
 
+
+	// make snake body gold momentarily on golden fruit collision 
 	useEffect(() => {
 		if(goldenFruitCollision === false)return; 
 		setGoldBody(true);
@@ -131,14 +132,14 @@ const Snakebody = ({headPosition, setHeadPosition, bodyPositions, setBodyPositio
 	return (
 		<>		
 				<div name='snakeComponent'
-					 className= {`h-[14px] w-[14px] ${wallCollision ? ('bg-[#647564]' ) : goldBody? ( 'bg-amber-200') : ('bg-black')} rounded-md m-[1px] absolute`}
+					 className= {`h-[14px] w-[14px] ${wallCollision ? ('bg-[#647564]' ) : goldBody? ( 'bg-orange-300') : ('bg-black')} rounded-md m-[1px] absolute`}
 				     style={{left: headPosition.left, top: headPosition.top}}>				    	
 				</div>
 				{bodyPositions.map((bodyPosition, index) => (
 					<div 
 						key={index}
 						name='snakeComponent'
-						className= {`h-[14px] w-[14px] ${goldBody ? 'bg-amber-200' : 'bg-black'} rounded-md m-[1px] absolute`}  
+						className= {`h-[14px] w-[14px] ${goldBody ? 'bg-orange-300' : 'bg-black'} rounded-md m-[1px] absolute`}  
 						style={{left: bodyPosition.left, top: bodyPosition.top}}
 					></div>
 				))}	

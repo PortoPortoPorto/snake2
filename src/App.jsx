@@ -19,9 +19,7 @@ const App = () => {
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0)
   const [highScore, setHighScore] = useState(0);
-
-
-
+  const [newHighScore, setNewHighScore] = useState(false);
 
   return (
     <>
@@ -29,7 +27,8 @@ const App = () => {
         <Gameboard gameStarted={gameStarted} setGameStarted={setGameStarted} 
         gameOver={gameOver} setGameOver={setGameOver} 
         score={score} setScore={setScore}
-        highScore={highScore} setHighScore={setHighScore}/>
+        highScore={highScore} setHighScore={setHighScore}
+        newHighScore={newHighScore} setNewHighScore={setNewHighScore}/>
         <Reset gameStarted={gameStarted} setGameStarted={setGameStarted} 
         gameOver={gameOver} setGameOver={setGameOver}
         score={score} setScore={setScore}/>

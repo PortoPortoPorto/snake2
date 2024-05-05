@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react'; 
 
-const Scorebox = (score, setScore) => {
+const Scorebox = ({score, setScore}) => {
 
 	let scoreToRender = score;
 
@@ -13,7 +13,7 @@ const Scorebox = (score, setScore) => {
 					Score
 				</div>
 				<div className = 'h-44 w-44 border border-solid border-black border-2 rounded-sm flex justify-center items-center'>
-					<h1 className = 'text-5xl'>{scoreToRender.score}</h1>
+					<h1 className = 'text-5xl'>{scoreToRender}</h1>
 				</div>
 			</div>
 		</>

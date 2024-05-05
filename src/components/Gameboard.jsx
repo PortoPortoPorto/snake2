@@ -11,9 +11,26 @@ import GameOverScreen from './GameOverScreen';
 import { useState, useEffect } from 'react'; 
 
 
-const Gameboard = ({gameStarted, gameOver, setGameOver, score, setScore, highScore, setHighScore}) => {
+const Gameboard = ({gameStarted, gameOver, setGameOver, score, setScore, 
+	highScore, setHighScore, newHighScore, setNewHighScore}) => {
 	
 
+    // set new high score state, to be passed as prop to game over screen component prior to mount 		
+	useEffect(() => {
+		if(gameStarted) {
+			setNewHighScore(true);
+		} else {
+			setNewHighScore(false); 
+		}
+	}, [highScore]);
+
+
+    // reset new high score state on game over in prep for game restart
+	useEffect(() => {
+		if(gameOver === true && newHighScore === true) {
+			setNewHighScore(false);  
+		}
+	}, [gameOver]);
 
 	return (
 		<>	
@@ -22,7 +39,7 @@ const Gameboard = ({gameStarted, gameOver, setGameOver, score, setScore, highSco
 				setScore={setScore}/>
 				<div className = ' p-5 h-[480px] w-[800px] border border-solid border-black border-[15px] relative'>
 					{gameStarted? (
-						gameOver? <GameOverScreen score={score}/>  : 
+						gameOver? <GameOverScreen score={score} newHighScore={newHighScore}/>  : 
 						<Snakescreen 
 						gameStarted={gameStarted} 
 						score={score} 
@@ -38,7 +55,9 @@ const Gameboard = ({gameStarted, gameOver, setGameOver, score, setScore, highSco
 				highScore={highScore} 
 				setHighScore={setHighScore}
 				gameStarted={gameStarted}
-				gameOver={gameOver}/>	
+				gameOver={gameOver}
+				newHighScore={newHighScore}
+				setNewHighScore={setNewHighScore}/>	
 			</div>		
 		</>
 	)
