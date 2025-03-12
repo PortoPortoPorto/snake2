@@ -1,5 +1,5 @@
 # Snake App
-![Snake Screenshot](src/assets/images/Screenshot.png)
+![Snake Screenshot](src/assets/images/screenshot.png)
 
 ## Overview 
 A browser-based Snake game built to practice front-end development, focusing on keyboard control, movement, collision detection, and random number generation.
